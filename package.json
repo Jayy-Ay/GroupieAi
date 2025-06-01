@@ -52,7 +52,7 @@
   },
   "scripts": {
     "format": "prettier --write .",
-    "lint": "eslint . --fix"
+    "lint": "eslint . --fix",
     "test": "jest --coverage"
   },
   "engines": {
