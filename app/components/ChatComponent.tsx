@@ -2,7 +2,11 @@ import { useEffect } from 'react';
 
 // ...existing imports
 
-const ChatComponent = ({ messages }) => {
+interface ChatComponentProps {
+  messages: any[]; // Replace 'any' with the actual message type if available
+}
+
+const ChatComponent = ({ messages }: ChatComponentProps) => {
   // ...existing state and functions
 
   const scrollToBottom = () => {
