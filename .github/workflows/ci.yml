@@ -45,7 +45,3 @@ jobs:
       # --- Tests + Coverage (60% threshold) ---
       - name: "Run Jest tests with coverage"
         run: npm test -- --coverage --coverageThreshold='{"global":{"lines":60}}'
-
-      # --- Tests + Coverage (60% threshold) ---
-      - name: "Run Jest tests with coverage"
-        run: npm test -- --coverage --coverageThreshold='{"global":{"lines":60}}'
