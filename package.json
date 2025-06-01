@@ -55,5 +55,17 @@
         "statements": 60
       }
     }
-  }
+  },
+  "eslintConfig": {
+    "extends": ["react-app", "eslint:recommended"]
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not op_mini all"
+  ]
 }
