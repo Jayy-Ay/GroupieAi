@@ -1,22 +1,23 @@
 {
-<<<<<<< HEAD
   "name": "",
-=======
-  "name": "my-remix-app",
->>>>>>> da924c31b03e8de871fa69102a0d6a871f559f11
   "private": true,
   "sideEffects": false,
   "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Jayy-Ay/GroupieAi.git"
+  },
   "scripts": {
     "build": "remix vite:build",
     "dev": "remix vite:dev",
+    "format": "prettier --write .",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
     "start": "remix-serve ./build/server/index.js",
+    "test": "jest --coverage",
     "typecheck": "tsc"
-  },
-  "repository": {
-  "type": "git",
-  "url": "https://github.com/Jayy-Ay/GroupieAi.git"
   },
   "dependencies": {
     "@remix-run/node": "^2.16.7",
@@ -45,28 +46,13 @@
     "vite": "^6.0.0",
     "vite-tsconfig-paths": "^4.2.1"
   },
-<<<<<<< HEAD
-  "engines": {
-    "node": ">=20.0.0"
-  }
-}
-=======
   "jest": {
-  "preset": "ts-jest",
-  "coverageThreshold": {
-    "global": {
-      "lines": 60,
-      "statements": 60
+    "preset": "ts-jest",
+    "coverageThreshold": {
+      "global": {
+        "lines": 60,
+        "statements": 60
       }
     }
-  },
-  "scripts": {
-    "format": "prettier --write .",
-    "lint": "eslint . --fix",
-    "test": "jest --coverage"
-  },
-  "engines": {
-    "node": ">=20.0.0"
   }
 }
->>>>>>> da924c31b03e8de871fa69102a0d6a871f559f11
