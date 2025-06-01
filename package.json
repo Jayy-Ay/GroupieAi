@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
   "name": "",
+=======
+  "name": "my-remix-app",
+>>>>>>> da924c31b03e8de871fa69102a0d6a871f559f11
   "private": true,
   "sideEffects": false,
   "type": "module",
@@ -37,7 +41,26 @@
     "vite": "^6.0.0",
     "vite-tsconfig-paths": "^4.2.1"
   },
+<<<<<<< HEAD
   "engines": {
     "node": ">=20.0.0"
   }
 }
+=======
+  "jest": {
+  "preset": "ts-jest",
+  "coverageThreshold": {
+    "global": {
+      "lines": 60,
+      "statements": 60
+      }
+    }
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
+>>>>>>> da924c31b03e8de871fa69102a0d6a871f559f11
