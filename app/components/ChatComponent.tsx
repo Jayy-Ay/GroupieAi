@@ -1,14 +1,17 @@
 import { useEffect } from 'react';
 
-// ...existing imports
+interface Message {
+  id: string; // or number, depending on your data
+  content: string;
+  sender: string; // Adjust the fields as per your actual data
+  timestamp: Date; // or string, depending on your data format
+}
 
 interface ChatComponentProps {
-  messages: any[]; // Replace 'any' with the actual message type if available
+  messages: Message[]; // Use the defined Message type
 }
 
 const ChatComponent = ({ messages }: ChatComponentProps) => {
-  // ...existing state and functions
-
   const scrollToBottom = () => {
     const chatContainer = document.getElementById('chat-container');
     if (chatContainer) {
@@ -16,13 +19,18 @@ const ChatComponent = ({ messages }: ChatComponentProps) => {
     }
   };
 
-  useEffect(() => {
+useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
   return (
     <div id="chat-container">
-      {/* ...existing JSX for chat messages... */}
+      {/* Render messages here */}
+      {messages.map((message) => (
+        <div key={message.id}>
+          <strong>{message.sender}</strong>: {message.content}
+        </div>
+      ))}
     </div>
   );
 };
