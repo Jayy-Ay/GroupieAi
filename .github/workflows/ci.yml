@@ -14,18 +14,22 @@ jobs:
       - name: "Checkout repository"
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0    # Fetches all Git history (needed for tools like Jest coverage)
+          fetch-depth: 0
 
       - name: "Set up Node.js (LTS)"
         uses: actions/setup-node@v4
         with:
-          node-version: "20"  # Matches the version in `engines.node` (from package.json)
-          cache: "npm"        # Caches `node_modules` for faster runs
+          node-version: "20"
+          cache: "npm"
 
       - name: "Install dependencies"
         run: npm ci
         env:
-          CI: true          # Ensures installs are optimized for CI environments
+          CI: true
+
+      # Ensure Jest is globally available by running an install step
+      - name: "Install Jest globally"
+        run: npm install -g jest
 
       # --- Linting (ESLint as Checkstyle equivalent) ---
       - name: "Run ESLint (Checkstyle equivalent)"
@@ -35,8 +39,12 @@ jobs:
       - name: "Check JSDoc coverage"
         run: |
           npm install -g jsdoc
-          jsdoc -c jsdoc.json  # Fail CI if JSDoc is missing (add your own rules)
-        continue-on-error: true  # Optional: Remove to enforce strict doc checks
+          jsdoc -c jsdoc.json
+        continue-on-error: true
+
+      # --- Tests + Coverage (60% threshold) ---
+      - name: "Run Jest tests with coverage"
+        run: npm test -- --coverage --coverageThreshold='{"global":{"lines":60}}'
 
       # --- Tests + Coverage (60% threshold) ---
       - name: "Run Jest tests with coverage"
