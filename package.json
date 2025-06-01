@@ -47,7 +47,7 @@
     }
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest --coverage"
   },
   "engines": {
     "node": ">=20.0.0"
