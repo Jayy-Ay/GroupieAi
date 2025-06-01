@@ -1,0 +1,48 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  lint-test-coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: "Set up Node.js (LTS)"
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: "Install dependencies"
+        run: npm ci
+        env:
+          CI: true
+
+      # Ensure Jest is globally available by running an install step
+      - name: "Install Jest globally"
+        run: npm install -g jest
+
+      # --- Linting (ESLint as Checkstyle equivalent) ---
+      - name: "Run ESLint (Checkstyle equivalent)"
+        run: npx eslint . --ignore-path .eslintignore
+
+      # --- JSDoc Validation (Optional) ---
+      - name: "Check JSDoc coverage"
+        run: |
+          npm install -g jsdoc
+          jsdoc -c jsdoc.json
+        continue-on-error: true
+
+      # --- Tests + Coverage (60% threshold) ---
+      # Locally test with $npm test -- --coverage
+      - name: "Run Jest tests with coverage"
+        run: npm test -- --coverage --coverageThreshold='{"global":{"lines":60}}'
