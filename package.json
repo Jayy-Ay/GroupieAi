@@ -37,6 +37,15 @@
     "vite": "^6.0.0",
     "vite-tsconfig-paths": "^4.2.1"
   },
+  "jest": {
+  "preset": "ts-jest",
+  "coverageThreshold": {
+    "global": {
+      "lines": 60,
+      "statements": 60
+      }
+    }
+  },
   "engines": {
     "node": ">=20.0.0"
   }
