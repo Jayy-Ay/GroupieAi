@@ -10,6 +10,10 @@
     "start": "remix-serve ./build/server/index.js",
     "typecheck": "tsc"
   },
+  "repository": {
+  "type": "git",
+  "url": "https://github.com/Jayy-Ay/GroupieAi.git"
+  },
   "dependencies": {
     "@remix-run/node": "^2.16.7",
     "@remix-run/react": "^2.16.7",
@@ -47,6 +51,8 @@
     }
   },
   "scripts": {
+    "format": "prettier --write .",
+    "lint": "eslint . --fix"
     "test": "jest --coverage"
   },
   "engines": {
