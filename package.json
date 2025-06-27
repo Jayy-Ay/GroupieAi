@@ -15,14 +15,16 @@
     "dev": "remix vite:dev",
     "format": "prettier --write .",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
-    "start": "remix-serve ./build/server/index.js",
+    "start": "cross-env NODE_ENV=production node ./server.js",
     "test": "jest --coverage",
     "typecheck": "tsc"
   },
   "dependencies": {
+    "@remix-run/express": "^2.16.8",
     "@remix-run/node": "^2.16.7",
     "@remix-run/react": "^2.16.7",
-    "@remix-run/serve": "^2.16.7",
+    "cross-env": "^7.0.3",
+    "express": "^4.21.2",
     "isbot": "^4.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
@@ -50,20 +52,5 @@
     "typescript": "^5.1.6",
     "vite": "^6.0.0",
     "vite-tsconfig-paths": "^4.2.1"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "eslint:recommended"
-    ]
-  },
-  "prettier": {
-    "semi": false,
-    "singleQuote": true
-  },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not op_mini all"
-  ]
+  }
 }
