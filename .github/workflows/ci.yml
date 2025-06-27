@@ -43,6 +43,6 @@ jobs:
         continue-on-error: true
 
       # --- Tests + Coverage (60% threshold) ---
-      # Locally test with $npm test -- --coverage
+      # Locally test code coverage with npm test -- --coverage
       - name: "Run Jest tests with coverage"
         run: npm test -- --coverage --coverageThreshold='{"global":{"lines":60}}'
