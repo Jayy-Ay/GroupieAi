@@ -11,14 +11,6 @@
     "url": "https://github.com/Jayy-Ay/GroupieAi.git"
   },
   "scripts": {
-<<<<<<< HEAD
-  "build": "remix vite:build",
-  "dev": "remix vite:dev",  
-  "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
-  "start": "cross-env NODE_ENV=production node ./server.js",
-  "typecheck": "tsc" 
-},
-=======
     "build": "remix vite:build",
     "dev": "remix vite:dev",
     "format": "prettier --write .",
@@ -27,11 +19,11 @@
     "test": "jest --coverage",
     "typecheck": "tsc"
   },
->>>>>>> a7aedc20bfd0db6862ecbb2bd62c1abe1210edfa
   "dependencies": {
     "@remix-run/node": "^2.16.7",
     "@remix-run/react": "^2.16.7",
     "@remix-run/serve": "^2.16.7",
+    "@supabase/supabase-js": "^2.52.0",
     "isbot": "^4.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
