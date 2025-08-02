@@ -1,14 +1,9 @@
-import {
-  Links,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-} from "@remix-run/react";
+// Special File that 'Wraps' around out application
+import { Links, Meta, Outlet, Scripts, ScrollRestoration, useRevalidator, useRouteError } from "@remix-run/react";
 import type { LinksFunction } from "@remix-run/node";
-import { createClient } from "@supabase/supabase-js";
+import { createBrowserClient } from "@supabase/auth-helpers-remix";
 import { useLoaderData } from "@remix-run/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./tailwind.css";
 
 export const links: LinksFunction = () => [
@@ -51,10 +46,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+
 export default function App() {
+  // Linked with createServerClient in routes/dashboard.tsx
   const { env } = useLoaderData()                           // "Destructuring" .env
-  const [supabase] = useState(() =>                         // useState() = singleton
-    createClient(env.SUPABASE_URL!, env.SUPABASE_ANON_KEY!) // Client Side
+  const [supabase] = useState(() =>                         // useState() makes singleton
+    createBrowserClient(env.SUPABASE_URL!, env.SUPABASE_ANON_KEY!) // X Local Storage ✔ Cookies
   )
 
   // See in Authentication / Users (Refresh at top right)
@@ -77,11 +74,26 @@ export default function App() {
   const signOut = () => {
     supabase.auth.signOut();
   };
+
+  // Data updating immediately whenever signing in or out and calling loaders
+  const revalidator = useRevalidator()
+  useEffect(() =>{
+    const { 
+      data: {subscription}, 
+    } = supabase.auth.onAuthStateChange(() => {
+      // Call loaders for any routues active on the page
+      revalidator.revalidate()
+    });
+
+    return () => {
+      subscription?.unsubscribe();
+    }
+  }, [supabase, revalidator])
   
   return (
     <Layout>
       <button onClick={signUp}>Sign Up</button>
-      <button onClick={signIn}>Sign Ip</button>
+      <button onClick={signIn}>Sign In</button>
       <button onClick={signOut}>Sign Out</button>
       <Outlet />
     </Layout>
