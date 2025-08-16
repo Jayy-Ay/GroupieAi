@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  user_id     Int        @id @default(autoincrement())
+  username    String
+  email       String     @unique
+  password    String
+
+  chatrooms   Chatroom[] @relation("UserChatrooms")
+  ownedRooms  Chatroom[] @relation("OwnedChatrooms") // 
+  messages    ChatMessage[]
+}
+
+model Chatroom {
+  chatroom_id       Int         @id @default(autoincrement())
+  title             String
+  owned_by          Int
+  owner             User        @relation("OwnedChatrooms", fields: [owned_by], references: [user_id])
+
+  userParticipants  User[]      @relation("UserChatrooms")
+  aiParticipants    AI[]
+  messages          ChatMessage[]
+}
+
+model AI {
+  ai_id        Int        @id @default(autoincrement())
+  model        String
+  prompt_style String
+  chatroom_id  Int
+  chatroom     Chatroom   @relation(fields: [chatroom_id], references: [chatroom_id])
+  messages     ChatMessage[]
+}
+
+model ChatMessage {
+  message_id      Int         @id @default(autoincrement())
+  sender_type     SenderType
+  content         String
+  sent_at         DateTime    @default(now())
+
+  chatroom_id     Int
+  chatroom        Chatroom    @relation(fields: [chatroom_id], references: [chatroom_id])
+
+  user_sender_id  Int?        
+  ai_sender_id    Int?        
+
+  userSender      User?       @relation(fields: [user_sender_id], references: [user_id])
+  aiSender        AI?         @relation(fields: [ai_sender_id], references: [ai_id])
+}
+
+enum SenderType {
+  user
+  ai
+}
