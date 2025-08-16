@@ -1,13 +1,11 @@
-import {
-  Links,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-} from "@remix-run/react";
+// Special File that 'Wraps' around out application
+import { Links, Meta, Outlet, Scripts, ScrollRestoration, useRevalidator } from "@remix-run/react";
 import type { LinksFunction } from "@remix-run/node";
-
+import { createBrowserClient } from "@supabase/auth-helpers-remix";
+import { useLoaderData } from "@remix-run/react";
+import { useEffect, useState } from "react";
 import "./tailwind.css";
+import SignIn from "app/components/SignIn";
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -40,6 +38,49 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+// .env needs to be 'piped' through loader to then be accessible to App()
+export const loader = async () => {
+  const env = {
+    SUPABASE_URL: process.env.SUPABASE_URL!,
+    SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY!
+  };
+  return { env };
+};
+
 export default function App() {
-  return <Outlet />;
+  // Linked with createServerClient in routes/dashboard.tsx
+  const { env } = useLoaderData();  // "Destructuring" .env. Completely fine red error
+  const [supabase] = useState(() => // useState() makes singleton
+    createBrowserClient(            // X Local Storage ✔ Cookies
+      env.SUPABASE_URL!,
+      env.SUPABASE_ANON_KEY!
+    )
+  );
+
+  // Data updating immediately whenever signing in or out and calling loaders
+  const revalidator = useRevalidator();
+  useEffect(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(() => {
+      // Call loaders for any routues active on the page
+      revalidator.revalidate();
+    });
+
+    return () => {
+      subscription?.unsubscribe();
+    };
+  }, [supabase, revalidator]);
+
+  return (
+    <Layout>
+      <div className="bg-gray-50 text-gray-900">
+        <h1 className="text-2xl font-bold mb-4">GroupieAI</h1>
+        <p className="mb-6">All your AI chatbots in one place.</p>
+          {/* SignIn Code is in app\components\SignIn.tsx */}
+          <SignIn supabase={supabase} />
+        <Outlet />
+      </div>
+    </Layout>
+  );
 }

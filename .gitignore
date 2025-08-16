@@ -43,5 +43,4 @@ Thumbs.db
 # Output of test coverage tools
 coverage/
 node_modules
-
-/generated/prisma
+generated/
