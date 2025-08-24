@@ -1,6 +1,6 @@
 // ESLint configuration for your project (ESLint v9+)
 
-/** @type {import('eslint').Linter.FlatConfig} */
+/** @type {import("eslint").FlatConfig[]} */
 export default [
   {
     ignores: [
