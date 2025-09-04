@@ -25,3 +25,4 @@ docs/
 .jest/
 *.swp
 *.swx
+generated/*

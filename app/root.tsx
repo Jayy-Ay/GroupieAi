@@ -5,7 +5,6 @@ import { createBrowserClient } from "@supabase/auth-helpers-remix";
 import { useLoaderData } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import "./tailwind.css";
-import SignIn from "app/components/SignIn";
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -49,24 +48,18 @@ export const loader = async () => {
 
 export default function App() {
   // Linked with createServerClient in routes/dashboard.tsx
-  const { env } = useLoaderData();  // "Destructuring" .env. Completely fine red error
-  const [supabase] = useState(() => // useState() makes singleton
-    createBrowserClient(            // X Local Storage ✔ Cookies
-      env.SUPABASE_URL!,
-      env.SUPABASE_ANON_KEY!
-    )
+  const { env } = useLoaderData();
+  const [supabase] = useState(() =>
+    createBrowserClient(env.SUPABASE_URL!, env.SUPABASE_ANON_KEY!)
   );
 
-  // Data updating immediately whenever signing in or out and calling loaders
   const revalidator = useRevalidator();
   useEffect(() => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(() => {
-      // Call loaders for any routues active on the page
       revalidator.revalidate();
     });
-
     return () => {
       subscription?.unsubscribe();
     };
@@ -77,9 +70,8 @@ export default function App() {
       <div className="bg-gray-50 text-gray-900">
         <h1 className="text-2xl font-bold mb-4">GroupieAI</h1>
         <p className="mb-6">All your AI chatbots in one place.</p>
-          {/* SignIn Code is in app\components\SignIn.tsx */}
-          <SignIn supabase={supabase} />
-        <Outlet />
+        {/* Remove direct SignIn usage here, provide supabase to all routes via context */}
+        <Outlet context={{ supabase }} />
       </div>
     </Layout>
   );

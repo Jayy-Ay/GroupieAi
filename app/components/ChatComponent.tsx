@@ -11,7 +11,7 @@ interface ChatComponentProps {
   messages: Message[]; // Use the defined Message type
 }
 
-const ChatComponent = ({ messages }: ChatComponentProps) => {
+export default function ChatComponent({ messages }: ChatComponentProps) {
   const scrollToBottom = () => {
     const chatContainer = document.getElementById('chat-container');
     if (chatContainer) {
@@ -34,5 +34,3 @@ useEffect(() => {
     </div>
   );
 };
-
-export default ChatComponent;

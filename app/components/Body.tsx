@@ -3,7 +3,6 @@
     Place the core content of the dashboard here.
     Author: Jared
 */
-
 import React from "react";
 
 /* children let you render componenents that are inside it. SO you can do:

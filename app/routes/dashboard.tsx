@@ -1,6 +1,6 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { createServerClient } from "@supabase/auth-helpers-remix";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData } from "@remix-run/react";
 
 // Im using Supabase, so run in terminal 'npm i @supabase/supabase-js'
 // This fetchs user profiles from Supabase databse (db)
