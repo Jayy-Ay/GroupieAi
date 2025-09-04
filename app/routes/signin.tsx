@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { useOutletContext } from "@remix-run/react";
+import { useOutletContext, useNavigate } from "@remix-run/react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 export default function SignInRoute() {
 	const { supabase } = useOutletContext<{ supabase: SupabaseClient }>();
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	const navigate = useNavigate();
 
 	const signUp = async () => {
 		await supabase.auth.signUp({
@@ -59,21 +60,17 @@ export default function SignInRoute() {
 					>
 						Log In
 					</button>
-					<div>
-						<a
-							href="GA_forgot_password.html"
-							className="underline text-blue-600"
-						>
-							Forgot password?
-						</a>
-						<button
-							type="button"
-							className="underline text-blue-600"
-						>
-							Don't have an account? Sign Up
-						</button>
-					</div>
 				</form>
+				<div className="flex flex-col items-center mt-2 gap-2">
+					<button
+						type="button"
+						className="underline text-blue-600"
+						onClick={() => navigate("/signup")}
+					>
+						Don't have an account? Sign Up
+					</button>
+					<a href="#" className="underline text-blue-600 text-sm">Forgot password?</a>
+				</div>
 			</div>
 		</div>
 	);

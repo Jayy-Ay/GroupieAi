@@ -1,8 +1,9 @@
-import prisma from "../lib/prisma";
+import prisma from "./prisma";
 import { createBrowserClient } from "@supabase/auth-helpers-remix";
 
 export interface User {
   id?: string;
+  username?: string;
   email?: string;
   name?: string;
   password?: string;
@@ -10,7 +11,7 @@ export interface User {
 
 export async function validateUser(user: User) {
   const foundUser = await prisma.user.findUnique({
-    where: { 
+    where: {
       email: user.email,
       password: user.password
     }
