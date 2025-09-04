@@ -1,7 +1,7 @@
 import prisma from "./prisma";
 import { createBrowserClient } from "@supabase/auth-helpers-remix";
 
-export interface User {
+export interface User {   // This defines what a User object looks like
   id?: string;
   username?: string;
   email?: string;
@@ -9,9 +9,9 @@ export interface User {
   password?: string;
 }
 
-export async function validateUser(user: User) {
-  const foundUser = await prisma.user.findUnique({
-    where: {
+export async function validateUser(user: User) {    // Validate user against the database
+  const foundUser = await prisma.user.findUnique({  // Check if user exists in db
+    where: {                                        // Kinda like a SQL query
       email: user.email,
       password: user.password
     }
@@ -29,21 +29,19 @@ export async function getUser(supabase: ReturnType<typeof createBrowserClient>):
   const { data } = await supabase.auth.getUser();
   const user = data.user;
   if (!user) return null;
-  // Map Supabase user to our User interface
-  const mappedUser: User = {
+  const mappedUser: User = {                      // Map Supabase user to our User interface above
     id: user.id,
-    email: user.email ?? "",
+    email: user.email ?? "",                      // '??' means if null/undefined, use empty string
     name: user.user_metadata?.name ?? "",
   };
-  const isValid = await validateUser(mappedUser);
+  const isValid = await validateUser(mappedUser); // Validate user against our db
   return isValid ? mappedUser : null;
 }
 
-// Store user in localStorage (or sessionStorage)
-export function setUser(user: User | null) {
+export function setUser(user: User | null) {            // Store user in localStorage (or sessionStorage)
   if (user) {
-    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("user", JSON.stringify(user)); // Convert user JSON object to string
   } else {
-    localStorage.removeItem("user");
+    localStorage.removeItem("user");                    // Remove user from storage if null
   }
 }

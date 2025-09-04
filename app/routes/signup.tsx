@@ -3,7 +3,7 @@ import { useNavigate, useActionData, Form } from "@remix-run/react";
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { registerUser } from "../lib/registerUser";
 
-export const action = async ({ request }: ActionFunctionArgs) => {
+export async function action({ request }: ActionFunctionArgs) { // Action function; Handle form submission
   const formData = await request.formData();
   const username = formData.get("username");
   const email = formData.get("email");
@@ -12,6 +12,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     return { error: "Username, email and password required." };
   }
   try {
+    // References function in app\lib\registerUser.ts
     await registerUser({ username: String(username), email: String(email), password: String(password) });
     return { success: true };
   } catch (err: any) {
@@ -20,14 +21,14 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 export default function SignUpRoute() {
-  const actionData = useActionData<typeof action>();
-  const navigate = useNavigate();
-  const [redirected, setRedirected] = useState(false);
+  const actionData = useActionData<typeof action>();    // Get data returned from action function
+  const navigate = useNavigate();                       // A in-built React hook to navigate
+  const [redirected, setRedirected] = useState(false);  // Track if already redirected
 
-  // Redirect to signin after success
+  // Redirect to root after success
   if (actionData?.success && !redirected) {
-    setTimeout(() => navigate("/signin"), 1500);
-    setRedirected(true);
+    setTimeout(() => navigate("/root"), 1500);  // Wait 1.5 seconds before redirecting to /root
+    setRedirected(true);                        // Ensure we only redirect once
   }
 
   return (
@@ -62,6 +63,7 @@ export default function SignUpRoute() {
           >
             Sign Up
           </button>
+          {/* Show error message if exists */}
           {actionData?.error && (
             <div className="text-red-500 text-sm">{actionData.error}</div>
           )}

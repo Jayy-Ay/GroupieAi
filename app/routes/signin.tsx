@@ -3,12 +3,12 @@ import { useOutletContext, useNavigate } from "@remix-run/react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 export default function SignInRoute() {
-	const { supabase } = useOutletContext<{ supabase: SupabaseClient }>();
-	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
-	const navigate = useNavigate();
+	const { supabase } = useOutletContext<{ supabase: SupabaseClient }>();  // Get supabase client from root.tsx
+	const [email, setEmail] = useState("");                                 // Track email input
+	const [password, setPassword] = useState("");                           // Track password input
+	const navigate = useNavigate();                                         // In-built React hook to navigate
 
-	const signUp = async () => {
+	const signUp = async () => {  // Not used, but here for reference
 		await supabase.auth.signUp({
 			email: email,
 			password: password,
@@ -22,7 +22,7 @@ export default function SignInRoute() {
 		});
 	};
 
-	const signOut = () => {
+	const signOut = () => {   // Not used, but here for reference
 		supabase.auth.signOut();
 	};
 
@@ -31,7 +31,7 @@ export default function SignInRoute() {
 			<div className="border border-black p-4 w-72 mx-auto rounded">
 				<h3 className="mt-0 mb-2 text-lg font-semibold">Log In</h3>
 				<form
-					onSubmit={async (e) => {
+					onSubmit={async (e) => {  // When form is submitted
 						e.preventDefault();
 						await signIn();
 					}}
@@ -62,6 +62,7 @@ export default function SignInRoute() {
 					</button>
 				</form>
 				<div className="flex flex-col items-center mt-2 gap-2">
+          {/* Navigate to signup.tsx page */}
 					<button
 						type="button"
 						className="underline text-blue-600"

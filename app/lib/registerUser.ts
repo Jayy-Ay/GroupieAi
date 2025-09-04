@@ -1,17 +1,12 @@
 import prisma from "./prisma";
 import { User } from "./validateUser";
 
-// Example registerUser function (update as needed)
-export async function registerUser(user: User) {
-    // You may want to hash the password before saving in production
-    if (!user.username) {
-        throw new Error("Username is required");
-    }
+export async function registerUser(user: User) {    // Register a new user in the database using username, email, password
     const newUser = await prisma.user.create({
         data: {
             username: user.username,
             email: user.email!,
-            password: user.password!,
+            password: user.password!,               // TODO: In the future, may want to hash password before saving in prod
         },
     });
     return newUser;
