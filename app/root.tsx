@@ -6,6 +6,11 @@ import { useLoaderData } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import "./tailwind.css";
 
+type env = {
+  SUPABASE_URL: string;
+  SUPABASE_ANON_KEY: string;
+}
+
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
@@ -19,25 +24,8 @@ export const links: LinksFunction = () => [
   },
 ];
 
-export function Layout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en">
-      <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <Meta />
-        <Links />
-      </head>
-      <body>
-        {children}
-        <ScrollRestoration />
-        <Scripts />
-      </body>
-    </html>
-  );
-}
 
-// .env needs to be 'piped' through loader to then be accessible to App()
+// .env needs to 'piped' through loader to be accessible to App()
 export const loader = async () => {
   const env = {
     SUPABASE_URL: process.env.SUPABASE_URL!,
@@ -48,7 +36,7 @@ export const loader = async () => {
 
 export default function App() {
   // Linked with createServerClient in routes/dashboard.tsx
-  const { env } = useLoaderData();
+  const { env } = useLoaderData<{ env: env }>();
   const [supabase] = useState(() =>
     createBrowserClient(env.SUPABASE_URL!, env.SUPABASE_ANON_KEY!)
   );
@@ -66,13 +54,23 @@ export default function App() {
   }, [supabase, revalidator]);
 
   return (
-    <Layout>
-      <div className="bg-gray-50 text-gray-900">
-        <h1 className="text-2xl font-bold mb-4">GroupieAI</h1>
-        <p className="mb-6">All your AI chatbots in one place.</p>
-        {/* Remove direct SignIn usage here, provide supabase to all routes via context */}
-        <Outlet context={{ supabase }} />
-      </div>
-    </Layout>
+    <html lang="en">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <Meta />
+        <Links />
+      </head>
+      <body>
+        <div className="bg-gray-50 text-gray-900">
+          <h1 className="text-2xl font-bold mb-4">GroupieAI</h1>
+          <p className="mb-6">All your AI chatbots in one place.</p>
+          {/* Provide supabase to all routes via context */}
+          <Outlet context={{ supabase }} />
+        </div>
+        <ScrollRestoration />
+        <Scripts />
+      </body>
+    </html>
   );
 }

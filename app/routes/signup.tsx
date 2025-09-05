@@ -1,45 +1,95 @@
 import { useState } from "react";
-import { useNavigate, useActionData, Form } from "@remix-run/react";
+import { useNavigate, useOutletContext } from "@remix-run/react";
+import Alerts from "../components/Alerts";
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { registerUser } from "../lib/registerUser";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 export async function action({ request }: ActionFunctionArgs) { // Action function; Handle form submission
   const formData = await request.formData();
   const username = formData.get("username");
   const email = formData.get("email");
   const password = formData.get("password");
+  let response;
   if (!username || !email || !password) {
-    return { error: "Username, email and password required." };
+    response = { error: "Username, email and password required." };
+  } else {
+    try {
+      // References function in app\lib\registerUser.ts
+      await registerUser({ username: String(username), email: String(email), password: String(password) });
+      response = { success: true };
+    } catch (err: any) {
+      response = { error: err.message || "Registration failed." };
+    }
   }
-  try {
-    // References function in app\lib\registerUser.ts
-    await registerUser({ username: String(username), email: String(email), password: String(password) });
-    return { success: true };
-  } catch (err: any) {
-    return { error: err.message || "Registration failed." };
-  }
+  return new Response(
+    JSON.stringify(response),
+    { headers: { "Content-Type": "application/json" } }
+  );
 };
 
 export default function SignUpRoute() {
-  const actionData = useActionData<typeof action>();    // Get data returned from action function
-  const navigate = useNavigate();                       // A in-built React hook to navigate
-  const [redirected, setRedirected] = useState(false);  // Track if already redirected
+  const { supabase } = useOutletContext<{ supabase: SupabaseClient }>();
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+  const [redirected, setRedirected] = useState(false);
+  const navigate = useNavigate();
 
-  // Redirect to root after success
-  if (actionData?.success && !redirected) {
-    setTimeout(() => navigate("/root"), 1500);  // Wait 1.5 seconds before redirecting to /root
-    setRedirected(true);                        // Ensure we only redirect once
-  }
+  const signUp = async () => {
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+    if (error) throw new Error(error.message);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setSuccess(false);
+    try {
+      // First, sign up with Supabase
+      await signUp();
+
+      // Then, register in the database
+      const res = await fetch("/signup", {
+        method: "POST",
+        body: new URLSearchParams({ username, email, password }),
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      });
+      let data;
+      try {
+        data = await res.json();
+      } catch {
+        setError("Unexpected server response. Please try again.");
+        return;
+      }
+      if (data.error) {
+        setError(data.error);
+      } else if (data.success) {
+        setSuccess(true);
+        setTimeout(() => navigate("/root"), 1500);
+        setRedirected(true);
+      }
+    } catch (err: any) {
+      setError(err.message || "Registration failed.");
+    }
+  };
 
   return (
     <div className="flex h-screen items-center justify-center">
       <div className="border border-black p-4 w-72 mx-auto rounded">
         <h3 className="mt-0 mb-2 text-lg font-semibold">Sign Up</h3>
-        <Form method="post">
+        <form onSubmit={handleSubmit}>
           <label className="block text-left mb-1">Username:</label>
           <input
             type="text"
             name="username"
+            value={username}
+            onChange={e => setUsername(e.target.value)}
             required
             className="w-full mb-2 px-2 py-1 border rounded"
           />
@@ -47,6 +97,8 @@ export default function SignUpRoute() {
           <input
             type="email"
             name="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
             required
             className="w-full mb-2 px-2 py-1 border rounded"
           />
@@ -54,6 +106,8 @@ export default function SignUpRoute() {
           <input
             type="password"
             name="password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
             required
             className="w-full mb-2 px-2 py-1 border rounded"
           />
@@ -63,16 +117,13 @@ export default function SignUpRoute() {
           >
             Sign Up
           </button>
-          {/* Show error message if exists */}
-          {actionData?.error && (
-            <div className="text-red-500 text-sm">{actionData.error}</div>
+          {error && (
+            <Alerts type="error" title="Sign Up Error" message={error} />
           )}
-          {actionData?.success && (
-            <div className="text-green-600 text-sm">
-              Registration successful! You can now sign in.
-            </div>
+          {success && (
+            <Alerts type="success" title="Registration successful!" message="You can now sign in." />
           )}
-        </Form>
+        </form>
         <div className="flex flex-col items-center mt-2 gap-2">
           <button
             type="button"
